@@ -5,10 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hilal'e Özel...</title>
     
-    <!-- Mobil Uyumlu Bootstrap CSS -->
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Özel Yazı Tipi -->
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti (Patlayan Konfetiler İçin) -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
         body {
@@ -24,7 +26,6 @@
             overflow-x: hidden;
         }
 
-        /* Arka Planda Uçuşan Kalpler */
         .kalp-arka-plan {
             position: absolute;
             font-size: 1.8rem;
@@ -38,17 +39,14 @@
             50% { transform: translateY(-20px) rotate(10deg); }
         }
 
-        /* Ana Kart Tasarımı */
         .mesaj-karti {
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
             border: 2px solid rgba(244, 63, 94, 0.3);
             border-radius: 24px;
             padding: 40px 30px;
             max-width: 600px;
             box-shadow: 0 15px 35px rgba(225, 29, 72, 0.15);
-            animation: cardIn 1s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             z-index: 10;
         }
@@ -74,32 +72,82 @@
         }
 
         .metin {
-            font-size: 1.08rem;
+            font-size: 1.05rem;
             line-height: 1.85;
             color: #881337;
-            font-weight: 400;
             text-align: justify;
-            text-justify: inter-word;
         }
 
-        .alt-not {
-            margin-top: 25px;
-            font-family: 'Caveat', cursive;
-            font-size: 1.8rem;
-            color: #be123c;
+        /* İnteraktif Buton Alanı */
+        .soru-alani {
+            margin-top: 30px;
             border-top: 1px dashed rgba(225, 29, 72, 0.3);
-            padding-top: 15px;
+            padding-top: 25px;
         }
 
-        @keyframes cardIn {
-            from { opacity: 0; transform: scale(0.9) translateY(20px); }
-            to { opacity: 1; transform: scale(1) translateY(0); }
+        .soru-baslik {
+            font-family: 'Caveat', cursive;
+            font-size: 2rem;
+            color: #be123c;
+            margin-bottom: 20px;
+        }
+
+        .buton-grubu {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            position: relative;
+            min-height: 60px;
+        }
+
+        .btn-evet {
+            background-color: #e11d48;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-evet:hover {
+            background-color: #be123c;
+            transform: scale(1.05);
+        }
+
+        .btn-hayir {
+            background-color: #94a3b8;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: absolute;
+            transition: all 0.2s ease;
+        }
+
+        /* Başarılı Cevap Kutusu */
+        .sonuc-kutusu {
+            display: none;
+            background: #ffe4e6;
+            border: 2px solid #f43f5e;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-    <!-- Arka Plan Kalp Süslemeleri -->
     <div class="kalp-arka-plan" style="top: 10%; left: 8%;">💖</div>
     <div class="kalp-arka-plan" style="top: 20%; right: 10%; animation-delay: 1s;">💕</div>
     <div class="kalp-arka-plan" style="bottom: 15%; left: 12%; animation-delay: 2s;">💗</div>
@@ -116,11 +164,52 @@
                 </p>
             </div>
 
-            <div class="alt-not">
-                Her Zaman Yanındayım ✨
+            <!-- İnteraktif Soru Bölümü -->
+            <div class="soru-alani">
+                <div class="soru-baslik">Beni affettin mi? 🥺</div>
+                
+                <div class="buton-grubu" id="butonAlani">
+                    <button class="btn-evet" onclick="affedildi()">Evet ✨</button>
+                    <button class="btn-hayir" id="hayirBtn" onmouseover="kac()" onclick="kac()">Hayır 🙈</button>
+                </div>
+
+                <!-- Evet'e Basılınca Açılacak Mesaj -->
+                <div class="sonuc-kutusu" id="sonucKutusu">
+                    <h4 style="color: #be123c; font-family: 'Caveat', cursive; font-size: 2.2rem; margin: 0;">
+                        Teşekkür ederim! 🌸
+                    </h4>
+                    <p style="color: #881337; margin-top: 10px; margin-bottom: 0;">
+                        Söz veriyorum bir daha seni hiç üzmeyeceğim, iyi ki varsın! ✨
+                    </p>
+                </div>
             </div>
         </div>
     </div>
 
+    <script>
+        // Hayır Butonunun Kaçma Fonksiyonu
+        function kac() {
+            const btn = document.getElementById('hayirBtn');
+            const x = Math.random() * (window.innerWidth - 150) - (window.innerWidth / 2) + 75;
+            const y = Math.random() * 200 - 100;
+            
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        // Evet Butonuna Basılınca Çalışan Fonksiyon
+        function affedildi() {
+            // Butonları gizle
+            document.getElementById('butonAlani').style.display = 'none';
+            // Sonuç kutusunu göster
+            document.getElementById('sonucKutusu').style.display = 'block';
+            
+            // Konfeti Efekti Patlat
+            confetti({
+                particleCount: 120,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+    </script>
 </body>
 </html>
