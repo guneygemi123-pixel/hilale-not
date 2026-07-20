@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <!-- Canvas Confetti (Patlayan Konfetiler İçin) -->
+    <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
@@ -78,7 +78,7 @@
             text-align: justify;
         }
 
-        /* İnteraktif Buton Alanı */
+        /* İnteraktif Soru Bölümü */
         .soru-alani {
             margin-top: 30px;
             border-top: 1px dashed rgba(225, 29, 72, 0.3);
@@ -92,24 +92,27 @@
             margin-bottom: 20px;
         }
 
+        /* Butonları Yan Yana Düzenleyen Kısım */
         .buton-grubu {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            align-items: center;
+            gap: 20px;
+            min-height: 80px;
             position: relative;
-            min-height: 60px;
         }
 
         .btn-evet {
             background-color: #e11d48;
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 32px;
             border-radius: 50px;
             font-weight: 600;
             font-size: 1.1rem;
             box-shadow: 0 4px 15px rgba(225, 29, 72, 0.3);
-            transition: all 0.2s ease;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            z-index: 2;
         }
 
         .btn-evet:hover {
@@ -121,12 +124,12 @@
             background-color: #94a3b8;
             color: white;
             border: none;
-            padding: 12px 30px;
+            padding: 12px 32px;
             border-radius: 50px;
             font-weight: 600;
             font-size: 1.1rem;
-            position: absolute;
             transition: all 0.2s ease;
+            z-index: 1;
         }
 
         /* Başarılı Cevap Kutusu */
@@ -190,20 +193,22 @@
         // Hayır Butonunun Kaçma Fonksiyonu
         function kac() {
             const btn = document.getElementById('hayirBtn');
-            const x = Math.random() * (window.innerWidth - 150) - (window.innerWidth / 2) + 75;
-            const y = Math.random() * 200 - 100;
+            
+            // İlk kaçışta butonu serbest konuma alıyoruz
+            btn.style.position = 'absolute';
+            
+            // Kart dışına taşmayacak mantıklı rastgele konumlar
+            const x = Math.floor(Math.random() * 200) - 100;
+            const y = Math.floor(Math.random() * 120) - 60;
             
             btn.style.transform = `translate(${x}px, ${y}px)`;
         }
 
         // Evet Butonuna Basılınca Çalışan Fonksiyon
         function affedildi() {
-            // Butonları gizle
             document.getElementById('butonAlani').style.display = 'none';
-            // Sonuç kutusunu göster
             document.getElementById('sonucKutusu').style.display = 'block';
             
-            // Konfeti Efekti Patlat
             confetti({
                 particleCount: 120,
                 spread: 70,
